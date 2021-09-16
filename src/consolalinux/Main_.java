@@ -8,7 +8,7 @@ import java.util.*;
 public class Main_ {
 
     public static void main(String[] args) {
-        
+        System.out.println("cambio");
         System_ system = new System_();
         Scanner entrada = new Scanner(System.in);
         System.out.println("Se habilitó la consola.\n");
