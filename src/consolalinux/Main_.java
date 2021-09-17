@@ -8,6 +8,7 @@ import java.util.*;
 public class Main_ {
 
     public static void main(String[] args) {
+        System.out.println("hola giuli");
         System_ system = new System_();
         Scanner entrada = new Scanner(System.in);
         System.out.println("Se habilitó la consola.\n");
@@ -72,7 +73,6 @@ public class Main_ {
                     } else {
                         System.out.println("No hay ningun usuario logueado");
                     }
-
                     break;
                 case "pwd":
                     break;
