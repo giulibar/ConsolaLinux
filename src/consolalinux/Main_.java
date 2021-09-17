@@ -16,7 +16,7 @@ public class Main_ {
         String comando[] = textoEscrito.split(" ");
         boolean primeraVez = true;
         while (!comando[0].equals("fin")) {
-            if (primeraVez) {
+            if (primeraVez && false) {
                 primeraVez = false;
             } else {
                 textoEscrito = entrada.nextLine();
