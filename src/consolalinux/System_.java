@@ -14,7 +14,7 @@ public class System_ {
     public System_() {
         userList = new ArrayList<>();
         foldersList = new ArrayList<>();
-        loggedUser = new User_();
+        loggedUser = null;
     }
 
     public ArrayList<User_> getUserList() {
