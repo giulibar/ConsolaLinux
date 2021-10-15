@@ -166,13 +166,7 @@ public class Main_ {
                 case "ls -l":
                     break;
                 case "history":
-                    User_ user7 = system.getLoggedUser();
-                    if (user7 != null) {
-                        ArrayList<String> listaComandos = user7.getCommands();
-                        for (String _comando : listaComandos) {
-                            System.out.println(_comando);
-                        }
-                        user7.addCommand("history");
+
                     }
                     break;
                 case "1er comando | 2do comando":
