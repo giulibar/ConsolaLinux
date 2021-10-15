@@ -47,11 +47,11 @@ public class User_ {
 //        folder.add(files);
 //    }
 //    
-     public void addComando(String comando) {
+     public void addCommand(String comando) {
         listaComandos.add(comando);
     }
      
-    public ArrayList<String> getListaComandos() {
+    public ArrayList<String> getCommands() {
         return listaComandos;
     }
 

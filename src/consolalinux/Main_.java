@@ -17,6 +17,17 @@ public class Main_ {
         while (!comando[0].equals("fin")) {
             if (primeraVez) {
                 primeraVez = false;
+
+                User_ giuli = new User_("Giuli"); // cargo en sistema al iniciar
+                giuli.setPassword("admin"); // cargo en sistema al iniciar
+                system.addUser(giuli); // cargo en sistema al iniciar
+
+                User_ vito = new User_("Vito"); // cargo en sistema al iniciar
+                vito.setPassword("admin"); // cargo en sistema al iniciar
+                system.addUser(vito); // cargo en sistema al iniciar
+
+                system.setLoggedUser(giuli); // cargo en sistema al iniciar
+
             } else {
                 textoEscrito = entrada.nextLine();
                 comando = textoEscrito.split(" ");
@@ -76,6 +87,9 @@ public class Main_ {
                             System.out.println("Ese usuario no existe o su contraseña no fue seteada!\n");
                         }
                     }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addCommand("su");
+                    }
                     break;
                 case "whoami":
                     User_ user3 = system.getLoggedUser();
@@ -84,9 +98,15 @@ public class Main_ {
                     } else {
                         System.out.println("No hay ningun usuario logueado");
                     }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addCommand("whoami");
+                    }
                     break;
                 case "pwd":
                     System.out.println(system.getRute());
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addCommand("pwd");
+                    }
                     break;
                 case "mkdir":
                     Folder_ archivoMkdir = new Folder_();
@@ -95,6 +115,8 @@ public class Main_ {
                     int permisos = Integer.parseInt(entrada.nextLine()); // checkear que este dentro del rango deseado?
                     archivoMkdir.setPermisos(permisos);
                     System.out.println("Su repositorio se creó correctamente!\n");
+                    User_ user5 = system.getLoggedUser();
+                    user5.addCommand("pwd");
                     break;
                 case "touch":
                     Folder_ file = new Folder_();
@@ -144,6 +166,14 @@ public class Main_ {
                 case "ls -l":
                     break;
                 case "history":
+                    User_ user7 = system.getLoggedUser();
+                    if (user7 != null) {
+                        ArrayList<String> listaComandos = user7.getCommands();
+                        for (String _comando : listaComandos) {
+                            System.out.println(_comando);
+                        }
+                        user7.addCommand("history");
+                    }
                     break;
                 case "1er comando | 2do comando":
                     break;
