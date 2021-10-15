@@ -17,6 +17,15 @@ public class Main_ {
         while (!comando[0].equals("fin")) {
             if (primeraVez) {
                 primeraVez = false;
+                User_ giuli = new User_("Giuli"); // cargo en sistema al iniciar
+                giuli.setPassword("admin"); // cargo en sistema al iniciar
+                system.addUser(giuli); // cargo en sistema al iniciar
+
+                User_ vito = new User_("Vito"); // cargo en sistema al iniciar
+                vito.setPassword("admin"); // cargo en sistema al iniciar
+                system.addUser(vito); // cargo en sistema al iniciar
+
+                system.setLoggedUser(giuli); // cargo en sistema al iniciar
             } else {
                 textoEscrito = entrada.nextLine();
                 comando = textoEscrito.split(" ");
@@ -55,7 +64,9 @@ public class Main_ {
                             }
                         }
                     }
-
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("passwd");
+                    }
                     break;
                 case "su":
                     if (comando.length == 1) {
@@ -76,6 +87,9 @@ public class Main_ {
                             System.out.println("Ese usuario no existe o su contraseña no fue seteada!\n");
                         }
                     }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("su");
+                    }
                     break;
                 case "whoami":
                     User_ user3 = system.getLoggedUser();
@@ -84,28 +98,40 @@ public class Main_ {
                     } else {
                         System.out.println("No hay ningun usuario logueado");
                     }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("whoami");
+                    }
                     break;
                 case "pwd":
                     System.out.println(system.getRute());
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("pwd");
+                    }
                     break;
                 case "mkdir":
                     Folder_ archivoMkdir = new Folder_();
                     archivoMkdir.setNombre(comando[1]);
                     System.out.print("Que permisos desea?: ");
                     int permisos = Integer.parseInt(entrada.nextLine());
-                    while(permisos < 0 || permisos > 3){
+                    while (permisos < 0 || permisos > 3) {
                         System.out.println("ERROR: solo se permiten permisos de 0-3.");
                         System.out.print("¿Que permisos desea?: ");
                         permisos = Integer.parseInt(entrada.nextLine());
                     }
                     archivoMkdir.setPermisos(permisos);
                     System.out.println("Su repositorio se creó correctamente!\n");
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("mkdir");
+                    }
                     break;
                 case "touch":
                     Folder_ file = new Folder_();
                     file.setNombre("nuevo.txt");
                     file.setPermisos(3);
                     System.out.println("Su archivo se creó correctamente!\n");
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("touch");
+                    }
                     break;
                 case "echo":
                     int largo = comando.length;
@@ -113,11 +139,11 @@ public class Main_ {
                     for (int i = 2; i < largo - 2; i++) {
                         textoAIngresar += " " + comando[i];
                     }
-                    for (int j = 0; j < textoAIngresar; j++){
-                        if (textoAIngresar.charAt(j).equals("-")){
-                            
-                        }
-                    }
+//                    for (int j = 0; j < textoAIngresar; j++){
+//                        if (textoAIngresar.charAt(j).equals("-")){
+//                            
+//                        }
+//                    }
                     // textoAIngresar.replaceAll('"', ''); // faltaria poder quitarle los parentesis a ese texto a ingresar al final del contenido
                     String nombreArchivo = comando[4];
                     boolean encontre = false;
@@ -127,10 +153,21 @@ public class Main_ {
                             folder.setContenido(folder.getContenido() + "\n" + textoAIngresar);
                         }
                     }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("echo");
+                    }
                     break;
                 case "mv":
+
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("mv");
+                    }
                     break;
                 case "cp":
+
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("cp");
+                    }
                     break;
                 case "cat":
                     boolean mostre = false;
@@ -139,6 +176,9 @@ public class Main_ {
                             System.out.println(folder.getContenido());
                             mostre = true;
                         }
+                    }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("cat");
                     }
                     break;
                 case "rm":
@@ -150,27 +190,33 @@ public class Main_ {
                             borre = true;
                         }
                     }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("rm");
+                    }
                     break;
                 case "cd":
                     break;
                 case "ls":
-                    if(comando[1].equals("-l")){
+                    if (comando[1].equals("-l")) {
                         System.out.println("Propietario:");
                         // ultima visitada?
                         System.out.println("Carpetas:");
                         // agregar estructura de organizacion de carpetas y archivos
                         // mostrar todas las carpetas o archivos de donde estoy posicionado
                     }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("ls");
+                    }
                     break;
                 case "history":
                     int largoComando = comando.length;
-                    if (largoComando == 4){
-                        if(comando[1].equals("|") && comando[2].equals("grep")){
+                    if (largoComando == 4) {
+                        if (comando[1].equals("|") && comando[2].equals("grep")) {
                             User_ user = system.getLoggedUser();
                             for (String comand : user.getListaComandos()) {
-                                if (comand.equals(comando[3])){
+                                if (comand.equals(comando[3])) {
                                     System.out.println("Se encontro ese comando.");
-                                }else{
+                                } else {
                                     System.out.println("No se encontro ese comando.");
                                 }
                             }
@@ -181,13 +227,23 @@ public class Main_ {
                             for (String comand : user.getListaComandos()) {
                                 System.out.println(comand);
                             }
-                            user.addComando("history");
                         }
+                    }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("history");
                     }
                     break;
                 case "1erComando | 2doComando":
+
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("pipe");
+                    }
                     break;
                 case "chmod":
+
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("chmod");
+                    }
                     break;
                 case "chown":
                     boolean cambiePropietario = false;
@@ -206,6 +262,9 @@ public class Main_ {
                         }
                     } else {
                         System.out.println("ERROR: No existe un usuario con ese nombre.");
+                    }
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("chown");
                     }
                     break;
             }
