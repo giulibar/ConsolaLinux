@@ -166,8 +166,28 @@ public class Main_ {
                 case "ls -l":
                     break;
                 case "history":
+                    int largoComando = comando.length;
+                    if (largoComando == 4) {
+                        if (comando[1].equals("|") && comando[2].equals("grep")) {
+                            User_ user = system.getLoggedUser();
+                            for (String comand : user.getCommands()) {
+                                if (comand.equals(comando[3])) {
+                                    System.out.println("Se ejecuto ese comando.");
+                                } else {
+                                    System.out.println("No se ejecuto ese comando.");
+                                }
+                            }
+                        }
+                    } else if (largoComando == 1) {
+                        User_ user = system.getLoggedUser();
+                        if (user != null) {
+                            for (String comand : user.getCommands()) {
+                                System.out.println(comand);
+                            }
+                            user.addCommand("history");
+                        }
+                    }
 
-                    
                     break;
                 case "1er comando | 2do comando":
                     break;
