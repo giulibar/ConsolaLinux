@@ -167,7 +167,7 @@ public class Main_ {
                     break;
                 case "history":
 
-                    }
+                    
                     break;
                 case "1er comando | 2do comando":
                     break;
