@@ -7,13 +7,15 @@ package consolalinux;
 public class Folder_ {
 
     private String nombre;
-    private int permisos; // nomeros del 0-7 (preguntar)
+    private int permisos; // numeros del 0-3
     private String contenido;
+    private String propietario;
     
     public Folder_() {
         nombre = null;
         permisos = 0;
         contenido = null;
+        propietario = null;
     }
 
     public String getNombre() {
@@ -27,6 +29,10 @@ public class Folder_ {
     public String getContenido() {
         return contenido;
     }
+    
+    public String getPropietario() {
+        return propietario;
+    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
@@ -38,6 +44,10 @@ public class Folder_ {
     
     public void setContenido(String contenido) {
         this.contenido = contenido;
+    }
+    
+    public void setPropietario(String nuevoNombrePropietario) {
+        this.propietario = nuevoNombrePropietario;
     }
     
 }

@@ -92,7 +92,12 @@ public class Main_ {
                     Folder_ archivoMkdir = new Folder_();
                     archivoMkdir.setNombre(comando[1]);
                     System.out.print("Que permisos desea?: ");
-                    int permisos = Integer.parseInt(entrada.nextLine()); // checkear que este dentro del rango deseado?
+                    int permisos = Integer.parseInt(entrada.nextLine());
+                    while(permisos < 0 || permisos > 3){
+                        System.out.println("ERROR: solo se permiten permisos de 0-3.");
+                        System.out.print("¿Que permisos desea?: ");
+                        permisos = Integer.parseInt(entrada.nextLine());
+                    }
                     archivoMkdir.setPermisos(permisos);
                     System.out.println("Su repositorio se creó correctamente!\n");
                     break;
@@ -103,59 +108,86 @@ public class Main_ {
                     System.out.println("Su archivo se creó correctamente!\n");
                     break;
                 case "echo":
+                    int largo = comando.length;
                     String textoAIngresar = comando[1];
+                    for (int i = 2; i < largo - 2; i++) {
+                        textoAIngresar += " " + comando[i];
+                    }
+                    // textoAIngresar.replaceAll('"', ''); // faltaria poder quitarle los parentesis a ese texto a ingresar al final del contenido
                     String nombreArchivo = comando[4];
+                    boolean encontre = false;
+                    for (Folder_ folder : system.getFolderList()) {
+                        if (!encontre && comando[1].equals(folder.getNombre())) {
+                            encontre = true;
+                            folder.setContenido(folder.getContenido() + "\n" + textoAIngresar);
+                        }
+                    }
                     break;
                 case "mv":
                     break;
                 case "cp":
                     break;
                 case "cat":
-//                    boolean mostre = false;
-//                    for (!mostre && Folder_  folder  {
-//                        
-//                    }
-//                    : system.getFolderList()
-//                     
-//                        ){
-//                        if (folder.getNombre().equals(this.getFolder().getNombre())) {
-//                            System.out.println("El contenido del archivo es:");
-//                            System.out.println(folder.getContenido());
-//                            mostre = true;
-//                        }
-//                    }
+                    boolean mostre = false;
+                    for (Folder_ folder : system.getFolderList()) {
+                        if (!mostre && comando[1].equals(folder.getNombre())) {
+                            System.out.println(folder.getContenido());
+                            mostre = true;
+                        }
+                    }
                     break;
-                case "rm": // anda?
-//                    boolean borre = false;
-//                    for (!borre && Folder_  folder  {
-//                        
-//                    }
-//                    : system.getFolderList()
-//                     
-//                        ){
-//                        if (this.getNombre().equals(folder.getNombre())) {
-//                            delete this.getFolder();
-//                            borre = true;
-//                        }
-//                    }
+                case "rm":
+                    boolean borre = false;
+                    for (Folder_ folder : system.getFolderList()) {
+                        if (!borre && comando[1].equals(folder.getNombre())) {
+                            folder.setContenido(null);
+                            system.getFolderList().remove(folder);
+                            borre = true;
+                        }
+                    }
                     break;
                 case "cd":
                     break;
-                case "ls -l":
+                case "ls":
+                    if(comando[1].equals("-l")){
+                        
+                    }
                     break;
                 case "history":
+                    User_ user = system.getLoggedUser();
+                    if (user != null) {
+                        for (String comand : user.getListaComandos()) {
+                            System.out.println(comand);
+                        }
+                        user.addCommand("history");
+                    }
                     break;
-                case "1er comando | 2do comando":
+                case "1erComando | 2doComando":
                     break;
                 case "history | grep":
                     break;
                 case "chmod":
                     break;
                 case "chown":
+                    boolean cambiePropietario = false;
+                    boolean existeUsuarioConEseNombre = false;
+                    for (User_ u : system.getUserList()) {
+                        if (comando[1].equals(u.getName())) {
+                            existeUsuarioConEseNombre = true;
+                        }
+                    }
+                    if (existeUsuarioConEseNombre) {
+                        for (Folder_ folder : system.getFolderList()) {
+                            if (!cambiePropietario && comando[2].equals(folder.getNombre())) {
+                                folder.setPropietario(comando[1]);
+                                cambiePropietario = true;
+                            }
+                        }
+                    } else {
+                        System.out.println("ERROR: No existe un usuario con ese nombre.");
+                    }
                     break;
             }
         }
-
     }
-
 }
