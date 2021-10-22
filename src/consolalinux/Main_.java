@@ -86,7 +86,7 @@ public class Main_ {
                     }
                     break;
                 case "pwd":
-
+                    System.out.println(system.getRute());
                     break;
                 case "mkdir":
                     Folder_ archivoMkdir = new Folder_();

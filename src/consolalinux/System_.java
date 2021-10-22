@@ -10,11 +10,24 @@ public class System_ {
     private ArrayList<User_> userList;
     private ArrayList<Folder_> foldersList;
     private User_ loggedUser;
+    private String rute;
 
     public System_() {
         userList = new ArrayList<>();
         foldersList = new ArrayList<>();
         loggedUser = null;
+        rute = "/";
+    }
+
+    public String getRute() {
+        return rute;
+    }
+
+    public void setRoute(String dir) {
+        rute += dir;
+        if (rute.charAt(0) == '/') {
+            rute = "/";
+        }
     }
 
     public ArrayList<User_> getUserList() {
