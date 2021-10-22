@@ -7,9 +7,18 @@ package consolalinux;
 public class Folder_ {
 
     private String nombre;
-    private int permisos; // numeros del 0-3
+    // Nombre del archivo
+    private int permisos;
+    // 0: Ninguno
+    // 1: Leer
+    // 2: Escribir
+    // 3: Leer y escribir
     private String contenido;
+    // Contenido del archivo
     private String propietario;
+    // El dueño del archivo
+    private String fecha;
+    private String hora;
     
     public Folder_() {
         nombre = null;
