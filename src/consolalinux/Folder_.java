@@ -1,62 +1,100 @@
 /*
 Nombres: Giuliano Bardecio [256113] y Vittorio Caiafa [252295]
-*/
-
+ */
 package consolalinux;
+
+import java.util.*;
 
 public class Folder_ {
 
     private String nombre;
-    // Nombre del archivo
-    private int permisos;
-    // 0: Ninguno
-    // 1: Leer
-    // 2: Escribir
-    // 3: Leer y escribir
-    private String contenido;
-    // Contenido del archivo
+    private String tipo;
+    private Map<String, Integer> permisoUsuario;
+    // CLAVE: nombre del usuario
+    // VALOR: permisos  0:Ninguno  1:Leer  2:Escribir  3:Leer y escribir
     private String propietario;
-    // El dueño del archivo
-    private String fecha;
-    private String hora;
-    
-    public Folder_() {
-        nombre = null;
-        permisos = 0;
-        contenido = null;
+    private ArrayList<Folder_> folderList;
+    private String contenido;
+    final String fechaYHora;
+
+    public Folder_(String nombre_, String _tipo) {
+        nombre = nombre_;
+        tipo = _tipo;
+        permisoUsuario = new HashMap<String, Integer>();
+        folderList = new ArrayList<Folder_>();
         propietario = null;
+        fechaYHora = "" + new Date();
     }
 
     public String getNombre() {
         return nombre;
     }
-    
-    public int getPermisos() {
-        return permisos;
+
+    public int getPermisos(String nombre) {
+        int permiso = permisoUsuario.get(nombre);
+        return permiso;
+
     }
-    
-    public String getContenido() {
-        return contenido;
-    }
-    
+
     public String getPropietario() {
         return propietario;
+    }
+
+    public ArrayList<Folder_> getFolders() {
+        return this.folderList;
+    }
+
+    public String getTipo() {
+        return this.tipo;
+    }
+
+    public String getContenido() {
+        return this.getContenido();
+    }
+
+    public String getFechaYHora() {
+        return this.fechaYHora;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public void setPermisos(int permisos) {
-        this.permisos = permisos;
+    public Folder_ buscarFolder(String nombreFolder) {
+        for (Folder_ folder : folderList) {
+            if (folder.getNombre().equals(nombreFolder)) {
+                return folder;
+            }
+        }
+        return null;
     }
-    
+
+    public void quitarArchivo(Folder_ fol) {
+        for (Folder_ folder : folderList) {
+            if (folder.getNombre().equals(fol.getNombre())) {
+                this.folderList.remove(folder);
+            }
+        }
+    }
+
+    public void setPermisos(int permisos, String nombre) {
+        this.permisoUsuario.put(nombre, permisos);
+    }
+
     public void setContenido(String contenido) {
-        this.contenido = contenido;
+        if (this.getTipo().equals("FILE")) {
+            this.contenido = contenido;
+        }
     }
-    
-    public void setPropietario(String nuevoNombrePropietario) {
-        this.propietario = nuevoNombrePropietario;
+
+    public void addFolder(Folder_ folder) {
+        if (this.getTipo().equals("FOLDER")) {
+            this.folderList.add(folder);
+        }
     }
-    
+
+    public void setPropietario(String nombre) {
+        this.propietario = nombre;
+    }
+
 }

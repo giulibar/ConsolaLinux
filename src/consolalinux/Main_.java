@@ -109,29 +109,23 @@ public class Main_ {
                     }
                     break;
                 case "mkdir":
-                    Folder_ archivoMkdir = new Folder_();
-                    archivoMkdir.setNombre(comando[1]);
-                    System.out.print("Que permisos desea?: ");
-                    int permisos = Integer.parseInt(entrada.nextLine());
-                    while (permisos < 0 || permisos > 3) {
-                        System.out.println("ERROR: solo se permiten permisos de 0-3.");
-                        System.out.print("¿Que permisos desea?: ");
-                        permisos = Integer.parseInt(entrada.nextLine());
-                    }
-                    archivoMkdir.setPermisos(permisos);
-                    System.out.println("Su repositorio se creó correctamente!\n");
+                    Folder_ archivoMkdir = new Folder_(comando[1], "FOLDER");
+                    archivoMkdir.setPermisos(3, system.getLoggedUser().getName());
+                    Folder_ folderActual = system.ultimoFolder(system.getRute());
+                    folderActual.addFolder(archivoMkdir);
+                    System.out.println("Su directorio se creó correctamente!\n");   
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("mkdir");
                     }
                     break;
                 case "touch":
-                    Folder_ file = new Folder_();
-                    file.setNombre("nuevo.txt");
-                    file.setPermisos(3);
-                    System.out.println("Su archivo se creó correctamente!\n");
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("touch");
-                    }
+//                    Folder_ file = new Folder_();
+//                    file.setNombre("nuevo.txt");
+//                    file.setPermisos(3);
+//                    System.out.println("Su archivo se creó correctamente!\n");
+//                    if (system.getLoggedUser() != null) {
+//                        system.getLoggedUser().addComando("touch");
+//                    }
                     break;
                 case "echo":
                     int largo = comando.length;
@@ -139,62 +133,83 @@ public class Main_ {
                     for (int i = 2; i < largo - 2; i++) {
                         textoAIngresar += " " + comando[i];
                     }
-//                    for (int j = 0; j < textoAIngresar; j++){
-//                        if (textoAIngresar.charAt(j).equals("-")){
-//                            
-//                        }
-//                    }
-                    // textoAIngresar.replaceAll('"', ''); // faltaria poder quitarle los parentesis a ese texto a ingresar al final del contenido
                     String nombreArchivo = comando[4];
-                    boolean encontre = false;
-                    for (Folder_ folder : system.getFolderList()) {
-                        if (!encontre && comando[1].equals(folder.getNombre())) {
-                            encontre = true;
-                            folder.setContenido(folder.getContenido() + "\n" + textoAIngresar);
-                        }
-                    }
+                    Folder_ folder = system.ultimoFolder(system.getRute());
+                    Folder_ file = folder.buscarFolder(nombreArchivo);
+                    file.setContenido(file.getContenido() + "\n" + textoAIngresar);
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("echo");
                     }
                     break;
                 case "mv":
+                    String nombreArchivo_ = comando[1];
+                    String rutaOrigen = comando[2];
+                    String rutaDestino = comando[3];
+
+                    Folder_ eliminarDe = system.ultimoFolder(rutaOrigen);
+                    Folder_ moverA = system.ultimoFolder(rutaDestino);
+
+                    Folder_ archivoAgregar = eliminarDe.buscarFolder(nombreArchivo_);
+
+                    eliminarDe.quitarArchivo(archivoAgregar);
+                    moverA.addFolder(archivoAgregar);
 
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("mv");
                     }
                     break;
                 case "cp":
+                    String nombreArchivo2_ = comando[1];
+                    String rutaOrigen2 = comando[2];
+                    String rutaDestino2 = comando[3];
+
+                    Folder_ copiarDe = system.ultimoFolder(rutaOrigen2);
+                    Folder_ moverA2 = system.ultimoFolder(rutaDestino2);
+
+                    Folder_ archivoAgregar2 = copiarDe.buscarFolder(nombreArchivo2_);
+                    
+                    moverA2.addFolder(archivoAgregar2);
 
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("cp");
                     }
                     break;
                 case "cat":
-                    boolean mostre = false;
-                    for (Folder_ folder : system.getFolderList()) {
-                        if (!mostre && comando[1].equals(folder.getNombre())) {
-                            System.out.println(folder.getContenido());
-                            mostre = true;
-                        }
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("cat");
-                    }
+//                    boolean mostre = false;
+//                    for (Folder_ folder : system.getFolderList()) {
+//                        if (!mostre && comando[1].equals(folder.getNombre())) {
+//                            System.out.println(folder.getContenido());
+//                            mostre = true;
+//                        }
+//                    }
+//                    if (system.getLoggedUser() != null) {
+//                        system.getLoggedUser().addComando("cat");
+//                    }
                     break;
                 case "rm":
-                    boolean borre = false;
-                    for (Folder_ folder : system.getFolderList()) {
-                        if (!borre && comando[1].equals(folder.getNombre())) {
-                            folder.setContenido(null);
-                            system.getFolderList().remove(folder);
-                            borre = true;
-                        }
+//                    boolean borre = false;
+//                    for (Folder_ folder : system.getFolderList()) {
+//                        if (!borre && comando[1].equals(folder.getNombre())) {
+//                            folder.setContenido(null);
+//                            system.getFolderList().remove(folder);
+//                            borre = true;
+//                        }
+//                    }
+//                    if (system.getLoggedUser() != null) {
+//                        system.getLoggedUser().addComando("rm");
+//                    }
+                    break;
+                case "cd":
+                    String ruta = comando[1];
+                    String rutaIni = system.getRute();
+                    system.setRoute(ruta);
+                    if (system.ultimoFolder(system.getRute()) == null){
+                        system.setDirectRoute(rutaIni);
+                        System.out.println("Error: esa ruta no existe");
                     }
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("rm");
                     }
-                    break;
-                case "cd":
                     break;
                 case "ls":
                     if (comando[1].equals("-l")) {
@@ -246,26 +261,26 @@ public class Main_ {
                     }
                     break;
                 case "chown":
-                    boolean cambiePropietario = false;
-                    boolean existeUsuarioConEseNombre = false;
-                    for (User_ u : system.getUserList()) {
-                        if (comando[1].equals(u.getName())) {
-                            existeUsuarioConEseNombre = true;
-                        }
-                    }
-                    if (existeUsuarioConEseNombre) {
-                        for (Folder_ folder : system.getFolderList()) {
-                            if (!cambiePropietario && comando[2].equals(folder.getNombre())) {
-                                folder.setPropietario(comando[1]);
-                                cambiePropietario = true;
-                            }
-                        }
-                    } else {
-                        System.out.println("ERROR: No existe un usuario con ese nombre.");
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("chown");
-                    }
+//                    boolean cambiePropietario = false;
+//                    boolean existeUsuarioConEseNombre = false;
+//                    for (User_ u : system.getUserList()) {
+//                        if (comando[1].equals(u.getName())) {
+//                            existeUsuarioConEseNombre = true;
+//                        }
+//                    }
+//                    if (existeUsuarioConEseNombre) {
+//                        for (Folder_ folder : system.getFolderList()) {
+//                            if (!cambiePropietario && comando[2].equals(folder.getNombre())) {
+//                                folder.setPropietario(comando[1]);
+//                                cambiePropietario = true;
+//                            }
+//                        }
+//                    } else {
+//                        System.out.println("ERROR: No existe un usuario con ese nombre.");
+//                    }
+//                    if (system.getLoggedUser() != null) {
+//                        system.getLoggedUser().addComando("chown");
+//                    }
                     break;
             }
         }
