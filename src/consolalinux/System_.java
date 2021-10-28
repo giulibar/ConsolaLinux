@@ -17,6 +17,14 @@ public class System_ {
         foldersList = new Folder_("/", "FOLDER"); // creo el directorio inicial como si fuera una carpeta
         loggedUser = null;
         rute = "/";
+
+        User_ giuli = new User_("Giuli"); // cargo en sistema al iniciar
+        giuli.setPassword("admin"); // cargo en sistema al iniciar
+        this.addUser(giuli); // cargo en sistema al iniciar
+        User_ vito = new User_("Vito"); // cargo en sistema al iniciar
+        vito.setPassword("admin"); // cargo en sistema al iniciar
+        this.addUser(vito); // cargo en sistema al iniciar
+        this.setLoggedUser(giuli); // cargo en sistema al iniciar
     }
 
     // retorna la ruta actual
@@ -39,13 +47,17 @@ public class System_ {
                 for (int i = 1; i < aux.length - 1; i++) {
                     this.rute += "/" + aux[i];
                 }
-                if (this.rute.equals("")){ this.rute = "/";}
+                if (this.rute.equals("")) {
+                    this.rute = "/";
+                }
             }
         }
     }
-    
+
     // si hubo un error con el seteo de la ruta me deja poner una "a fuerza"
-    public void setDirectRoute(String rut){ this.rute = rut;}
+    public void setDirectRoute(String rut) {
+        this.rute = rut;
+    }
 
     // retorna el Folder_ que esta a lo ultimo de la ruta q le pase, devuelve null si no lo encontro
     public Folder_ ultimoFolder(String ruta) {

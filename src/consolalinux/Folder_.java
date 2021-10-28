@@ -13,7 +13,8 @@ public class Folder_ {
     // CLAVE: nombre del usuario
     // VALOR: permisos  0:Ninguno  1:Leer  2:Escribir  3:Leer y escribir
     private String propietario;
-    private ArrayList<Folder_> folderList;
+    private Map<String, Folder_> folderList;
+    private ArrayList<String> nombresFolClave; // necesito un array con todas las claves si quiero obtenerlos todos del hashmap()
     private String contenido;
     final String fechaYHora;
 
@@ -21,8 +22,10 @@ public class Folder_ {
         nombre = nombre_;
         tipo = _tipo;
         permisoUsuario = new HashMap<String, Integer>();
-        folderList = new ArrayList<Folder_>();
-        propietario = null;
+        propietario = "";
+        folderList = new HashMap<String, Folder_>();
+        nombresFolClave = new ArrayList<>();
+        contenido = "";
         fechaYHora = "" + new Date();
     }
 
@@ -31,17 +34,15 @@ public class Folder_ {
     }
 
     public int getPermisos(String nombre) {
-        int permiso = permisoUsuario.get(nombre);
-        return permiso;
-
+        if (this.folderList.containsKey(nombre)){
+            return this.permisoUsuario.get(nombre);
+        }else{
+            return -1;
+        }
     }
 
     public String getPropietario() {
-        return propietario;
-    }
-
-    public ArrayList<Folder_> getFolders() {
-        return this.folderList;
+        return this.propietario;
     }
 
     public String getTipo() {
@@ -49,7 +50,7 @@ public class Folder_ {
     }
 
     public String getContenido() {
-        return this.getContenido();
+        return this.contenido;
     }
 
     public String getFechaYHora() {
@@ -60,20 +61,20 @@ public class Folder_ {
         this.nombre = nombre;
     }
 
+    // devuelve el Folder_ de nombre "nombreFolder" si lo contiene, o null sino lo contiene
     public Folder_ buscarFolder(String nombreFolder) {
-        for (Folder_ folder : folderList) {
-            if (folder.getNombre().equals(nombreFolder)) {
-                return folder;
-            }
+        Folder_ fol = folderList.get(nombreFolder);
+        if (fol != null) {
+            return fol;
+        } else {
+            return null;
         }
-        return null;
     }
 
     public void quitarArchivo(Folder_ fol) {
-        for (Folder_ folder : folderList) {
-            if (folder.getNombre().equals(fol.getNombre())) {
-                this.folderList.remove(folder);
-            }
+        Folder_ fol1 = folderList.get(fol.getNombre());
+        if (fol1 != null) {
+            folderList.put(fol.getNombre(), null);
         }
     }
 
@@ -83,14 +84,24 @@ public class Folder_ {
 
     public void setContenido(String contenido) {
         if (this.getTipo().equals("FILE")) {
-            this.contenido = contenido;
+            this.contenido += "\n" + contenido;
         }
     }
 
     public void addFolder(Folder_ folder) {
         if (this.getTipo().equals("FOLDER")) {
-            this.folderList.add(folder);
+            this.folderList.put(folder.getNombre(), folder);
+            this.nombresFolClave.add(folder.getNombre());
         }
+    }
+    
+    // devuelve un array con todos los Folder_ que contiene
+    public ArrayList<Folder_> getFolders(){
+        ArrayList<Folder_> folders = new ArrayList<>();
+        for (String nombres : this.nombresFolClave){
+            folders.add(this.buscarFolder(nombres));
+        }
+        return folders;
     }
 
     public void setPropietario(String nombre) {
