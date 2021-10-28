@@ -21,6 +21,8 @@ public class Main_ {
         Scanner entrada = new Scanner(System.in);
 
         System.out.println(ANSI_YELLOW + "Se habilito la consola.\n" + ANSI_RESET);
+        System.out.print(ANSI_PURPLE + system.getLoggedUser().getName() + "@DESKTOP" + ANSI_RESET + ":");
+        System.out.print(ANSI_CYAN + system.getRute() + ANSI_RESET + "$ ");
         String textoEscrito = entrada.nextLine();
         String comando[] = textoEscrito.split(" ");
         boolean primeraVez = true;
@@ -28,8 +30,8 @@ public class Main_ {
             if (primeraVez) {
                 primeraVez = false;
             } else {
-                System.out.print(ANSI_PURPLE + system.getLoggedUser().getName() + "@" + "root " + ANSI_RESET);
-                System.out.print(ANSI_CYAN + system.getRute() + ANSI_RESET + ": ");
+                System.out.print(ANSI_PURPLE + system.getLoggedUser().getName() + "@DESKTOP" + ANSI_RESET + ":");
+                System.out.print(ANSI_CYAN + system.getRute() + ANSI_RESET + "$ ");
                 textoEscrito = entrada.nextLine();
                 comando = textoEscrito.split(" ");
             }
@@ -112,37 +114,56 @@ public class Main_ {
                     }
                     break;
                 case "mkdir":
-                    Folder_ archivoMkdir = new Folder_(comando[1], "FOLDER");
-                    archivoMkdir.setPermisos(3, system.getLoggedUser().getName());
-                    archivoMkdir.setPropietario(system.getLoggedUser().getName());
-                    Folder_ folderActual = system.ultimoFolder(system.getRute());
-                    folderActual.addFolder(archivoMkdir);
-                    System.out.println(ANSI_GREEN + "Su directorio se creó correctamente!\n" + ANSI_RESET);
+                    Folder_ folderActual_1 = system.ultimoFolder(system.getRute());
+                    int permisos = folderActual_1.getPermisos(system.getLoggedUser().getName());
+                    if (permisos == 2 || permisos == 6) {
+                        Folder_ archivoMkdir = new Folder_(comando[1], "FOLDER");
+                        archivoMkdir.setPermisos("666"); // en la practica, PROP y USER tienen permisos de lectura y escritura
+                        archivoMkdir.setPropietario(system.getLoggedUser().getName());
+                        Folder_ folderActual = system.ultimoFolder(system.getRute());
+                        folderActual.addFolder(archivoMkdir);
+                        System.out.println(ANSI_GREEN + "Su directorio se creó correctamente!\n" + ANSI_RESET);
+                    } else {
+                        System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+                    }
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("mkdir");
                     }
                     break;
                 case "touch":
-                    Folder_ file = new Folder_(comando[1], "FILE");
-                    file.setPermisos(3, system.getLoggedUser().getName());
-                    file.setPropietario(system.getLoggedUser().getName());
-                    Folder_ folderActual_ = system.ultimoFolder(system.getRute());
-                    folderActual_.addFolder(file);
-                    System.out.println(ANSI_GREEN + "Su archivo se creó correctamente!\n" + ANSI_RESET);
+                    Folder_ folderActual_2 = system.ultimoFolder(system.getRute());
+                    int permisos2 = folderActual_2.getPermisos(system.getLoggedUser().getName());
+                    if (permisos2 == 2 || permisos2 == 6) {
+                        Folder_ file = new Folder_(comando[1], "FILE");
+                        file.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
+                        file.setPropietario(system.getLoggedUser().getName());
+                        Folder_ folderActual_ = system.ultimoFolder(system.getRute());
+                        folderActual_.addFolder(file);
+                        System.out.println(ANSI_GREEN + "Su archivo se creó correctamente!\n" + ANSI_RESET);
+                        System.out.println(ANSI_GREEN + "Su directorio se creó correctamente!\n" + ANSI_RESET);
+                    } else {
+                        System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+                    }
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("touch");
                     }
                     break;
                 case "echo":
-                    int largo = comando.length;
-                    String textoAIngresar = comando[1];
-                    for (int i = 2; i < largo - 2; i++) {
-                        textoAIngresar += " " + comando[i];
+                    Folder_ folderActual_3 = system.ultimoFolder(system.getRute());
+                    int permisos3 = folderActual_3.getPermisos(system.getLoggedUser().getName());
+                    if (permisos3 == 2 || permisos3 == 6) {
+                        int largo = comando.length;
+                        String textoAIngresar = comando[1];
+                        for (int i = 2; i < largo - 2; i++) {
+                            textoAIngresar += " " + comando[i];
+                        }
+                        String nombreArchivo = comando[largo - 1];
+                        Folder_ folder = system.ultimoFolder(system.getRute());
+                        Folder_ file_ = folder.buscarFolder(nombreArchivo);
+                        file_.setContenido(textoAIngresar);
+                    } else {
+                        System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
                     }
-                    String nombreArchivo = comando[largo - 1];
-                    Folder_ folder = system.ultimoFolder(system.getRute());
-                    Folder_ file_ = folder.buscarFolder(nombreArchivo);
-                    file_.setContenido(textoAIngresar);
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("echo");
                     }
@@ -156,6 +177,8 @@ public class Main_ {
                     Folder_ moverA = system.ultimoFolder(rutaDestino);
 
                     Folder_ archivoAgregar = eliminarDe.buscarFolder(nombreArchivo_);
+                    archivoAgregar.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
+                    archivoAgregar.setPropietario(system.getLoggedUser().getName());
 
                     eliminarDe.quitarArchivo(archivoAgregar);
                     moverA.addFolder(archivoAgregar);
@@ -170,14 +193,14 @@ public class Main_ {
                     String rutaDestino2 = comando[3];
 
                     Folder_ copiarDe = system.ultimoFolder(rutaOrigen2);
-                    Folder_ folAcopiar = copiarDe.buscarFolder(nombreArchivo2_);
-                    Folder_ nuevaCopia = new Folder_(folAcopiar.getNombre(), folAcopiar.getTipo());
+                    Folder_ fileAcopiar = copiarDe.buscarFolder(nombreArchivo2_);
+
+                    Folder_ nuevaCopia = new Folder_(fileAcopiar.getNombre(), fileAcopiar.getTipo());
+                    nuevaCopia.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
                     nuevaCopia.setPropietario(system.getLoggedUser().getName());
-                    nuevaCopia.setContenido(folAcopiar.getContenido());
-                    // copio permisos?
-                    // en el caso que folAcopiar se carpeta, copio todo lo que esta adentro??
+                    nuevaCopia.setContenido(fileAcopiar.getContenido());
+
                     Folder_ moverA2 = system.ultimoFolder(rutaDestino2);
-                    Folder_ archivoAgregar2 = copiarDe.buscarFolder(nuevaCopia.getNombre());
                     moverA2.addFolder(nuevaCopia);
 
                     if (system.getLoggedUser() != null) {
@@ -219,13 +242,9 @@ public class Main_ {
                 case "ls":
                     if (comando[1].equals("-l")) {
                         Folder_ actualFolder2 = system.ultimoFolder(system.getRute());
-                        System.out.println("Fecha y Hora de creacion: " + actualFolder2.getFechaYHora());
-                        System.out.println("Propietario: " + actualFolder2.getPropietario());
-                        System.out.println("Permisos: " + actualFolder2.getPermisos(system.getLoggedUser().getName()));
-                        System.out.println("Carpetas: ");
                         ArrayList<Folder_> folders = actualFolder2.getFolders();
                         for (Folder_ fol : folders) {
-                            System.out.println("-" + fol.getNombre());
+                            System.out.println(fol.toString()); //imprimo la metadata del folder
                         }
                     }
                     if (system.getLoggedUser() != null) {
@@ -264,32 +283,24 @@ public class Main_ {
                     }
                     break;
                 case "chmod":
-
+                    String permisos_ = comando[1];
+                    String nombreArch_ = comando[2];
+                    Folder_ actualFolder4 = system.ultimoFolder(system.getRute());
+                    Folder_ folderACambiarPermisos = actualFolder4.buscarFolder(nombreArch_);
+                    folderACambiarPermisos.setPermisos(permisos_);
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("chmod");
                     }
                     break;
                 case "chown":
-//                    boolean cambiePropietario = false;
-//                    boolean existeUsuarioConEseNombre = false;
-//                    for (User_ u : system.getUserList()) {
-//                        if (comando[1].equals(u.getName())) {
-//                            existeUsuarioConEseNombre = true;
-//                        }
-//                    }
-//                    if (existeUsuarioConEseNombre) {
-//                        for (Folder_ folder : system.getFolderList()) {
-//                            if (!cambiePropietario && comando[2].equals(folder.getNombre())) {
-//                                folder.setPropietario(comando[1]);
-//                                cambiePropietario = true;
-//                            }
-//                        }
-//                    } else {
-//                        System.out.println("ERROR: No existe un usuario con ese nombre.");
-//                    }
-//                    if (system.getLoggedUser() != null) {
-//                        system.getLoggedUser().addComando("chown");
-//                    }
+                    String nuevoProp = comando[1];
+                    String nombreArch = comando[2];
+                    Folder_ actualFolder3 = system.ultimoFolder(system.getRute());
+                    Folder_ folderACambiarProp = actualFolder3.buscarFolder(nombreArch);
+                    folderACambiarProp.setPropietario(nuevoProp);
+                    if (system.getLoggedUser() != null) {
+                        system.getLoggedUser().addComando("chown");
+                    }
                     break;
             }
         }

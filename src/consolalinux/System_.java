@@ -15,13 +15,15 @@ public class System_ {
     public System_() {
         userList = new ArrayList<>();
         foldersList = new Folder_("/", "FOLDER"); // creo el directorio inicial como si fuera una carpeta
+        foldersList.setPermisos("666");
         loggedUser = null;
         rute = "/";
 
-        User_ giuli = new User_("Giuli"); // cargo en sistema al iniciar
+        User_ giuli = new User_("giuli"); // cargo en sistema al iniciar
         giuli.setPassword("admin"); // cargo en sistema al iniciar
+        giuli.setRoot(true);
         this.addUser(giuli); // cargo en sistema al iniciar
-        User_ vito = new User_("Vito"); // cargo en sistema al iniciar
+        User_ vito = new User_("vito"); // cargo en sistema al iniciar
         vito.setPassword("admin"); // cargo en sistema al iniciar
         this.addUser(vito); // cargo en sistema al iniciar
         this.setLoggedUser(giuli); // cargo en sistema al iniciar
