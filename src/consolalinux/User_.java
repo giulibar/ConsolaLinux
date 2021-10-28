@@ -10,7 +10,7 @@ public class User_ {
     private String name;
     private String password;
     private ArrayList<String> listaComandos;
-    private Boolean isRoot;
+    private Boolean isRoot; //
 
     public User_(String name) {
         this.name = name;
