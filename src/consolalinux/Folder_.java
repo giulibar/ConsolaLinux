@@ -34,9 +34,9 @@ public class Folder_ {
     }
 
     public int getPermisos(String nombre) {
-        if (this.folderList.containsKey(nombre)){
+        if (this.folderList.containsKey(nombre)) {
             return this.permisoUsuario.get(nombre);
-        }else{
+        } else {
             return -1;
         }
     }
@@ -84,7 +84,11 @@ public class Folder_ {
 
     public void setContenido(String contenido) {
         if (this.getTipo().equals("FILE")) {
-            this.contenido += "\n" + contenido;
+            if (this.contenido.equals("")) {
+                this.contenido += contenido;
+            } else {
+                this.contenido += "\n" + contenido;
+            }
         }
     }
 
@@ -94,11 +98,11 @@ public class Folder_ {
             this.nombresFolClave.add(folder.getNombre());
         }
     }
-    
+
     // devuelve un array con todos los Folder_ que contiene
-    public ArrayList<Folder_> getFolders(){
+    public ArrayList<Folder_> getFolders() {
         ArrayList<Folder_> folders = new ArrayList<>();
-        for (String nombres : this.nombresFolClave){
+        for (String nombres : this.nombresFolClave) {
             folders.add(this.buscarFolder(nombres));
         }
         return folders;
@@ -106,6 +110,10 @@ public class Folder_ {
 
     public void setPropietario(String nombre) {
         this.propietario = nombre;
+    }
+
+    public void copiarData(Folder_ to) {
+
     }
 
 }

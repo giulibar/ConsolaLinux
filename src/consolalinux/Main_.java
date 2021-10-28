@@ -135,8 +135,8 @@ public class Main_ {
                     break;
                 case "echo":
                     int largo = comando.length;
-                    String textoAIngresar = "";
-                    for (int i = 1; i < largo - 2; i++) {
+                    String textoAIngresar = comando[1];
+                    for (int i = 2; i < largo - 2; i++) {
                         textoAIngresar += " " + comando[i];
                     }
                     String nombreArchivo = comando[largo - 1];
@@ -170,11 +170,15 @@ public class Main_ {
                     String rutaDestino2 = comando[3];
 
                     Folder_ copiarDe = system.ultimoFolder(rutaOrigen2);
+                    Folder_ folAcopiar = copiarDe.buscarFolder(nombreArchivo2_);
+                    Folder_ nuevaCopia = new Folder_(folAcopiar.getNombre(), folAcopiar.getTipo());
+                    nuevaCopia.setPropietario(system.getLoggedUser().getName());
+                    nuevaCopia.setContenido(folAcopiar.getContenido());
+                    // copio permisos?
+                    // en el caso que folAcopiar se carpeta, copio todo lo que esta adentro??
                     Folder_ moverA2 = system.ultimoFolder(rutaDestino2);
-
-                    Folder_ archivoAgregar2 = copiarDe.buscarFolder(nombreArchivo2_);
-
-                    moverA2.addFolder(archivoAgregar2);
+                    Folder_ archivoAgregar2 = copiarDe.buscarFolder(nuevaCopia.getNombre());
+                    moverA2.addFolder(nuevaCopia);
 
                     if (system.getLoggedUser() != null) {
                         system.getLoggedUser().addComando("cp");
