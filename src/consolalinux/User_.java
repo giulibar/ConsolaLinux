@@ -36,18 +36,6 @@ public class User_ {
         this.password = password;
     }
 
-//    public ArrayList<String> getFolders() {
-//        return folder;
-//    }
-
-//    public void addFolder(String folder) { // cambiar
-//        folder.add(files);
-//    }
-//    
-//    public void setFiles(String files) {
-//        folder.add(files);
-//    }
-//    
      public void addComando(String comando) {
         listaComandos.add(comando);
     }

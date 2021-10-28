@@ -28,6 +28,7 @@ public class Main_ {
             if (primeraVez) {
                 primeraVez = false;
             } else {
+                System.out.print(ANSI_PURPLE + system.getLoggedUser().getName() + "@" + "root " + ANSI_RESET);
                 System.out.print(ANSI_CYAN + system.getRute() + ANSI_RESET + ": ");
                 textoEscrito = entrada.nextLine();
                 comando = textoEscrito.split(" ");
@@ -124,6 +125,7 @@ public class Main_ {
                 case "touch":
                     Folder_ file = new Folder_(comando[1], "FILE");
                     file.setPermisos(3, system.getLoggedUser().getName());
+                    file.setPropietario(system.getLoggedUser().getName());
                     Folder_ folderActual_ = system.ultimoFolder(system.getRute());
                     folderActual_.addFolder(file);
                     System.out.println(ANSI_GREEN + "Su archivo se creó correctamente!\n" + ANSI_RESET);
@@ -218,7 +220,7 @@ public class Main_ {
                         System.out.println("Permisos: " + actualFolder2.getPermisos(system.getLoggedUser().getName()));
                         System.out.println("Carpetas: ");
                         ArrayList<Folder_> folders = actualFolder2.getFolders();
-                        for (Folder_ fol : folders){
+                        for (Folder_ fol : folders) {
                             System.out.println("-" + fol.getNombre());
                         }
                     }
