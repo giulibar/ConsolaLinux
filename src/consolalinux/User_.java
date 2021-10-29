@@ -14,7 +14,7 @@ public class User_ {
 
     public User_(String name) {
         this.name = name;
-        this.password = "";
+        this.password = null;
         listaComandos = new ArrayList<>();
         isRoot = false;
     }

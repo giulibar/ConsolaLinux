@@ -7,24 +7,25 @@ import java.util.*;
 
 public class Main_ {
 
-    public static void main(String[] args) {
-        String ANSI_RED = "\u001B[31m";
-        String ANSI_GREEN = "\u001B[32m";
-        String ANSI_YELLOW = "\u001B[33m";
-        String ANSI_BLUE = "\u001B[34m";
-        String ANSI_PURPLE = "\u001B[35m";
-        String ANSI_CYAN = "\u001B[36m";
-        String ANSI_WHITE = "\u001B[37m";
-        String ANSI_RESET = "\u001B[0m";
+    // inicio el sistema
+    public static System_ system = new System_();
+    public static Scanner entrada = new Scanner(System.in);
+    public static String ANSI_RED = "\u001B[31m";
+    public static String ANSI_GREEN = "\u001B[32m";
+    public static String ANSI_YELLOW = "\u001B[33m";
+    public static String ANSI_PURPLE = "\u001B[35m";
+    public static String ANSI_CYAN = "\u001B[36m";
+    public static String ANSI_WHITE = "\u001B[37m";
+    public static String ANSI_RESET = "\u001B[0m";
 
-        System_ system = new System_();
-        Scanner entrada = new Scanner(System.in);
+    public static void main(String[] args) {
 
         System.out.println(ANSI_YELLOW + "Se habilito la consola.\n" + ANSI_RESET);
         System.out.print(ANSI_PURPLE + system.getLoggedUser().getName() + "@DESKTOP" + ANSI_RESET + ":");
         System.out.print(ANSI_CYAN + system.getRute() + ANSI_RESET + "$ ");
         String textoEscrito = entrada.nextLine();
         String comando[] = textoEscrito.split(" ");
+
         boolean primeraVez = true;
         while (!comando[0].equals("fin")) {
             if (primeraVez) {
@@ -37,155 +38,31 @@ public class Main_ {
             }
             switch (comando[0]) {
                 case "useradd":
-                    if (comando.length == 1) {
-                        System.out.println(ANSI_RED + "Debe ingresar el nombre del usuario" + ANSI_RESET);
-                    } else {
-                        User_ user = new User_(comando[1]);
-                        System.out.println(ANSI_GREEN + "Se agregó a " + user.getName() + "\n" + ANSI_RESET);
-                        system.addUser(user);
-                    }
+                    useradd(comando);
                     break;
                 case "passwd":
-                    if (comando.length == 1) {
-                        System.out.println(ANSI_RED + "Debe ingresar el nombre del usuario a setear la password" + ANSI_RESET);
-                    } else {
-                        User_ user1 = system.getUser(comando[1]);
-                        if (user1 == null) {
-                            System.out.println(ANSI_RED + "Ese usuario no existe!\n" + ANSI_RESET);
-                        } else {
-                            boolean sonIguales = false;
-                            while (!sonIguales) {
-                                System.out.print("Ingrese la password: ");
-                                String password1 = entrada.nextLine();
-                                System.out.print("Vuelva a ingresarla: ");
-                                String password2 = entrada.nextLine();
-                                if (password1.equals(password2)) {
-                                    user1.setPassword(password1);
-                                    sonIguales = true;
-                                    System.out.println(ANSI_GREEN + "Su password quedó lista!\n" + ANSI_RESET);
-                                } else {
-                                    System.out.println(ANSI_RED + "Password incorrecta!\n" + ANSI_RESET);
-                                }
-                            }
-                        }
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("passwd");
-                    }
+                    passwd(comando);
                     break;
                 case "su":
-                    if (comando.length == 1) {
-                        System.out.println(ANSI_RED + "Debe ingresar el nombre del usuario" + ANSI_RESET);
-                    } else {
-                        User_ user2 = system.getUser(comando[1]);
-                        if (user2 != null && user2.getPassword() != null) {
-                            System.out.print("Ingrese la password de " + comando[1] + ": ");
-                            String password = entrada.nextLine();
-                            while (!password.equals(user2.getPassword())) {
-                                System.out.println(ANSI_RED + "Password incorrecta, vuelva a intentarlo!\n" + ANSI_RESET);
-                                System.out.print("Ingrese la password de " + comando[1] + ": ");
-                                password = entrada.nextLine();
-                            }
-                            system.setLoggedUser(user2);
-                            System.out.println(ANSI_GREEN + "Se logueó correctamente a " + user2.getName() + "!\n" + ANSI_RESET);
-                        } else {
-                            System.out.println(ANSI_RED + "Ese usuario no existe o su contraseña no fue seteada!\n" + ANSI_RESET);
-                        }
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("su");
-                    }
+                    su(comando);
                     break;
                 case "whoami":
-                    User_ user3 = system.getLoggedUser();
-                    if (user3 != null) {
-                        System.out.println(user3.getName());
-                    } else {
-                        System.out.println(ANSI_YELLOW + "No hay ningun usuario logueado" + ANSI_RESET);
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("whoami");
-                    }
+                    whoami(comando);
                     break;
                 case "pwd":
-                    System.out.println(system.getRute());
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("pwd");
-                    }
+                    pwd(comando);
                     break;
                 case "mkdir":
-                    Folder_ folderActual_1 = system.ultimoFolder(system.getRute());
-                    int permisos = folderActual_1.getPermisos(system.getLoggedUser().getName());
-                    if (permisos == 2 || permisos == 6) {
-                        Folder_ archivoMkdir = new Folder_(comando[1], "FOLDER");
-                        archivoMkdir.setPermisos("666"); // en la practica, PROP y USER tienen permisos de lectura y escritura
-                        archivoMkdir.setPropietario(system.getLoggedUser().getName());
-                        Folder_ folderActual = system.ultimoFolder(system.getRute());
-                        folderActual.addFolder(archivoMkdir);
-                        System.out.println(ANSI_GREEN + "Su directorio se creó correctamente!\n" + ANSI_RESET);
-                    } else {
-                        System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("mkdir");
-                    }
+                    mkdir(comando);
                     break;
                 case "touch":
-                    Folder_ folderActual_2 = system.ultimoFolder(system.getRute());
-                    int permisos2 = folderActual_2.getPermisos(system.getLoggedUser().getName());
-                    if (permisos2 == 2 || permisos2 == 6) {
-                        Folder_ file = new Folder_(comando[1], "FILE");
-                        file.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
-                        file.setPropietario(system.getLoggedUser().getName());
-                        Folder_ folderActual_ = system.ultimoFolder(system.getRute());
-                        folderActual_.addFolder(file);
-                        System.out.println(ANSI_GREEN + "Su archivo se creó correctamente!\n" + ANSI_RESET);
-                        System.out.println(ANSI_GREEN + "Su directorio se creó correctamente!\n" + ANSI_RESET);
-                    } else {
-                        System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("touch");
-                    }
+                    touch(comando);
                     break;
                 case "echo":
-                    Folder_ folderActual_3 = system.ultimoFolder(system.getRute());
-                    int permisos3 = folderActual_3.getPermisos(system.getLoggedUser().getName());
-                    if (permisos3 == 2 || permisos3 == 6) {
-                        int largo = comando.length;
-                        String textoAIngresar = comando[1];
-                        for (int i = 2; i < largo - 2; i++) {
-                            textoAIngresar += " " + comando[i];
-                        }
-                        String nombreArchivo = comando[largo - 1];
-                        Folder_ folder = system.ultimoFolder(system.getRute());
-                        Folder_ file_ = folder.buscarFolder(nombreArchivo);
-                        file_.setContenido(textoAIngresar);
-                    } else {
-                        System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("echo");
-                    }
+                    echo(comando);
                     break;
                 case "mv":
-                    String nombreArchivo_ = comando[1];
-                    String rutaOrigen = comando[2];
-                    String rutaDestino = comando[3];
-
-                    Folder_ eliminarDe = system.ultimoFolder(rutaOrigen);
-                    Folder_ moverA = system.ultimoFolder(rutaDestino);
-
-                    Folder_ archivoAgregar = eliminarDe.buscarFolder(nombreArchivo_);
-                    archivoAgregar.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
-                    archivoAgregar.setPropietario(system.getLoggedUser().getName());
-
-                    eliminarDe.quitarArchivo(archivoAgregar);
-                    moverA.addFolder(archivoAgregar);
-
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("mv");
-                    }
+                    mv(comando);
                     break;
                 case "cp":
                     String nombreArchivo2_ = comando[1];
@@ -304,5 +181,201 @@ public class Main_ {
                     break;
             }
         }
+
+    }
+
+    public static void useradd(String[] comando) {
+        if (comando.length == 1) {
+            System.out.println(ANSI_RED + "Debe ingresar el nombre del usuario" + ANSI_RESET);
+        } else {
+            User_ user = new User_(comando[1]);
+            System.out.println(ANSI_GREEN + "Se agregó a " + user.getName() + "\n" + ANSI_RESET);
+            system.addUser(user);
+        }
+    }
+
+    public static void passwd(String[] comando) {
+        if (comando.length == 1) {
+            System.out.println(ANSI_RED + "Debe ingresar el nombre del usuario a setear la password" + ANSI_RESET);
+        } else {
+            User_ user1 = system.getUser(comando[1]);
+            if (user1 == null) {
+                System.out.println(ANSI_RED + "Ese usuario no existe!\n" + ANSI_RESET);
+            } else {
+                boolean sonIguales = false;
+                while (!sonIguales) {
+                    System.out.print("Ingrese la password: ");
+                    String password1 = entrada.nextLine();
+                    System.out.print("Vuelva a ingresarla: ");
+                    String password2 = entrada.nextLine();
+                    if (password1.equals(password2)) {
+                        user1.setPassword(password1);
+                        sonIguales = true;
+                        System.out.println(ANSI_GREEN + "Su password quedó lista!\n" + ANSI_RESET);
+                    } else {
+                        System.out.println(ANSI_RED + "Password incorrecta!\n" + ANSI_RESET);
+                    }
+                }
+            }
+        }
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando("passwd");
+        }
+    }
+
+    public static void su(String[] comando) {
+        if (comando.length == 1) {
+            System.out.println(ANSI_RED + "Debe ingresar el nombre del usuario" + ANSI_RESET);
+        } else {
+            User_ user2 = system.getUser(comando[1]);
+            if (user2 != null && user2.getPassword() != null) {
+                System.out.print("Ingrese la password de " + comando[1] + ": ");
+                String password = entrada.nextLine();
+                while (!password.equals(user2.getPassword())) {
+                    System.out.println(ANSI_RED + "Password incorrecta, vuelva a intentarlo!\n" + ANSI_RESET);
+                    System.out.print("Ingrese la password de " + comando[1] + ": ");
+                    password = entrada.nextLine();
+                }
+                system.setLoggedUser(user2);
+                System.out.println(ANSI_GREEN + "Se logueó correctamente a " + user2.getName() + "!\n" + ANSI_RESET);
+            } else {
+                System.out.println(ANSI_RED + "Ese usuario no existe o su contraseña no fue seteada!\n" + ANSI_RESET);
+            }
+        }
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando("su");
+        }
+    }
+
+    public static void whoami(String[] comando) {
+        User_ user3 = system.getLoggedUser();
+        if (user3 != null) {
+            System.out.println(user3.getName());
+        } else {
+            System.out.println(ANSI_YELLOW + "No hay ningun usuario logueado" + ANSI_RESET);
+        }
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando("whoami");
+        }
+    }
+
+    public static void pwd(String[] comando) {
+        System.out.println(system.getRute());
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando("pwd");
+        }
+    }
+
+    public static void mkdir(String[] comando) {
+        Folder_ folderActual_1 = system.ultimoFolder(system.getRute());
+        int permisos = folderActual_1.getPermisos(system.getLoggedUser().getName());
+        if (permisos == 2 || permisos == 6) {
+            Folder_ archivoMkdir = new Folder_(comando[1], "FOLDER");
+            archivoMkdir.setPermisos("666"); // en la practica, PROP y USER tienen permisos de lectura y escritura
+            archivoMkdir.setPropietario(system.getLoggedUser().getName());
+            Folder_ folderActual = system.ultimoFolder(system.getRute());
+            folderActual.addFolder(archivoMkdir);
+            System.out.println(ANSI_GREEN + "Su directorio se creó correctamente!\n" + ANSI_RESET);
+        } else {
+            System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+        }
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando("mkdir");
+        }
+    }
+
+    public static void touch(String[] comando) {
+        Folder_ folderActual_2 = system.ultimoFolder(system.getRute());
+        int permisos2 = folderActual_2.getPermisos(system.getLoggedUser().getName());
+        if (permisos2 == 2 || permisos2 == 6) {
+            Folder_ file = new Folder_(comando[1], "FILE");
+            file.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
+            file.setPropietario(system.getLoggedUser().getName());
+            Folder_ folderActual_ = system.ultimoFolder(system.getRute());
+            folderActual_.addFolder(file);
+            System.out.println(ANSI_GREEN + "Su archivo se creó correctamente!\n" + ANSI_RESET);
+        } else {
+            System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+        }
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando("touch");
+        }
+    }
+
+    public static void echo(String[] comando) {
+        Folder_ folderActual_3 = system.ultimoFolder(system.getRute());
+        int permisos3 = folderActual_3.getPermisos(system.getLoggedUser().getName());
+        if (permisos3 == 2 || permisos3 == 6) {
+            int largo = comando.length;
+            String textoAIngresar = comando[1];
+            for (int i = 2; i < largo - 2; i++) {
+                textoAIngresar += " " + comando[i];
+            }
+            String nombreArchivo = comando[largo - 1];
+            Folder_ folder = system.ultimoFolder(system.getRute());
+            Folder_ file_ = folder.buscarFolder(nombreArchivo);
+            file_.setContenido(textoAIngresar);
+        } else {
+            System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+        }
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando("echo");
+        }
+    }
+
+    public static void mv(String[] comando) {
+        String nombreArchivo_ = comando[1];
+        String rutaOrigen = comando[2];
+        String rutaDestino = comando[3];
+
+        Folder_ eliminarDe = system.ultimoFolder(rutaOrigen);
+        Folder_ moverA = system.ultimoFolder(rutaDestino);
+
+        Folder_ archivoAgregar = eliminarDe.buscarFolder(nombreArchivo_);
+        archivoAgregar.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
+        archivoAgregar.setPropietario(system.getLoggedUser().getName());
+
+        eliminarDe.quitarArchivo(archivoAgregar);
+        moverA.addFolder(archivoAgregar);
+
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando("mv");
+        }
+    }
+
+    public static void cp(String[] comando) {
+
+    }
+
+    public static void cat(String[] comando) {
+
+    }
+
+    public static void rm(String[] comando) {
+
+    }
+
+    public static void cd(String[] comando) {
+
+    }
+
+    public static void ls(String[] comando) {
+
+    }
+
+    public static void history(String[] comando) {
+
+    }
+
+    public static void pipe(String[] comando) {
+
+    }
+
+    public static void chmod(String[] comando) {
+
+    }
+
+    public static void chown(String[] comando) {
+
     }
 }

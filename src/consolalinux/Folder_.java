@@ -16,7 +16,7 @@ public class Folder_ {
     private Integer permisoPropietario;
     private Integer permisoGrupo;
     private Integer permisoUsuario;
-    // VALOR: permisos  0...7 en octal
+    // VALOR: permisos  0...7 en octal, grupo no lo uso
 
     public Folder_(String nombre_, String _tipo) {
         nombre = nombre_;
@@ -108,7 +108,10 @@ public class Folder_ {
     public ArrayList<Folder_> getFolders() {
         ArrayList<Folder_> folders = new ArrayList<>();
         for (String key : this.folderList.keySet()) {
-            folders.add(this.folderList.get(key));
+            Folder_ foli = this.folderList.get(key);
+            if (foli != null) {
+                folders.add(foli);
+            }
         }
         return folders;
     }
