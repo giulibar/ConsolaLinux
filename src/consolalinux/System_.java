@@ -23,9 +23,9 @@ public class System_ {
         giuli.setPassword("admin"); // cargo en sistema al iniciar
         giuli.setRoot(true);
         this.addUser(giuli); // cargo en sistema al iniciar
-        User_ vito = new User_("vito"); // cargo en sistema al iniciar
-        vito.setPassword("admin"); // cargo en sistema al iniciar
-        this.addUser(vito); // cargo en sistema al iniciar
+        User_ vitto = new User_("vitto"); // cargo en sistema al iniciar
+        vitto.setPassword("admin"); // cargo en sistema al iniciar
+        this.addUser(vitto); // cargo en sistema al iniciar
         this.setLoggedUser(giuli); // cargo en sistema al iniciar
     }
 

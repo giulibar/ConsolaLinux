@@ -36,6 +36,8 @@ public class Main_ {
                 textoEscrito = entrada.nextLine();
                 comando = textoEscrito.split(" ");
             }
+            agregarComando(textoEscrito);
+
             switch (comando[0]) {
                 case "useradd":
                     useradd(comando);
@@ -65,119 +67,32 @@ public class Main_ {
                     mv(comando);
                     break;
                 case "cp":
-                    String nombreArchivo2_ = comando[1];
-                    String rutaOrigen2 = comando[2];
-                    String rutaDestino2 = comando[3];
-
-                    Folder_ copiarDe = system.ultimoFolder(rutaOrigen2);
-                    Folder_ fileAcopiar = copiarDe.buscarFolder(nombreArchivo2_);
-
-                    Folder_ nuevaCopia = new Folder_(fileAcopiar.getNombre(), fileAcopiar.getTipo());
-                    nuevaCopia.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
-                    nuevaCopia.setPropietario(system.getLoggedUser().getName());
-                    nuevaCopia.setContenido(fileAcopiar.getContenido());
-
-                    Folder_ moverA2 = system.ultimoFolder(rutaDestino2);
-                    moverA2.addFolder(nuevaCopia);
-
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("cp");
-                    }
+                    cp(comando);
                     break;
                 case "cat":
-                    String nombreFolder = comando[1];
-                    Folder_ actualFolder = system.ultimoFolder(system.getRute());
-                    Folder_ fileAImprimir = actualFolder.buscarFolder(nombreFolder);
-                    if (fileAImprimir != null) {
-                        System.out.println(fileAImprimir.getContenido());
-                    } else {
-                        System.out.println(ANSI_RED + "Error: ese archivo no existe" + ANSI_RESET);
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("cat");
-                    }
+                    cat(comando);
                     break;
                 case "rm":
-                    String nombreFolder_ = comando[1];
-                    Folder_ actualFolder_ = system.ultimoFolder(system.getRute());
-                    Folder_ folderABorrar_ = actualFolder_.buscarFolder(nombreFolder_);
-                    actualFolder_.quitarArchivo(folderABorrar_);
-                    folderABorrar_ = null;
+                    rm(comando);
                     break;
                 case "cd":
-                    String ruta = comando[1];
-                    String rutaIni = system.getRute();
-                    system.setRoute(ruta);
-                    if (system.ultimoFolder(system.getRute()) == null) {
-                        system.setDirectRoute(rutaIni);
-                        System.out.println(ANSI_RED + "Error: esa ruta no existe" + ANSI_RESET);
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("rm");
-                    }
+                    cd(comando);
                     break;
                 case "ls":
-                    if (comando[1].equals("-l")) {
-                        Folder_ actualFolder2 = system.ultimoFolder(system.getRute());
-                        ArrayList<Folder_> folders = actualFolder2.getFolders();
-                        for (Folder_ fol : folders) {
-                            System.out.println(fol.toString()); //imprimo la metadata del folder
-                        }
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("ls");
-                    }
+                    ls(comando);
                     break;
                 case "history":
-                    int largoComando = comando.length;
-                    if (largoComando == 4) {
-                        if (comando[1].equals("|") && comando[2].equals("grep")) {
-                            User_ user = system.getLoggedUser();
-                            for (String comand : user.getListaComandos()) {
-                                if (comand.equals(comando[3])) {
-                                    System.out.println("Se encontro ese comando.");
-                                } else {
-                                    System.out.println("No se encontro ese comando.");
-                                }
-                            }
-                        }
-                    } else if (largoComando == 1) {
-                        User_ user = system.getLoggedUser();
-                        if (user != null) {
-                            for (String comand : user.getListaComandos()) {
-                                System.out.println(comand);
-                            }
-                        }
-                    }
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("history");
-                    }
-                    break;
-                case "1erComando | 2doComando":
-
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("pipe");
+                    if (comando.length == 1) {
+                        history(comando);
+                    } else if (comando.length == 4) {
+                        pipe(comando);
                     }
                     break;
                 case "chmod":
-                    String permisos_ = comando[1];
-                    String nombreArch_ = comando[2];
-                    Folder_ actualFolder4 = system.ultimoFolder(system.getRute());
-                    Folder_ folderACambiarPermisos = actualFolder4.buscarFolder(nombreArch_);
-                    folderACambiarPermisos.setPermisos(permisos_);
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("chmod");
-                    }
+                    chmod(comando);
                     break;
                 case "chown":
-                    String nuevoProp = comando[1];
-                    String nombreArch = comando[2];
-                    Folder_ actualFolder3 = system.ultimoFolder(system.getRute());
-                    Folder_ folderACambiarProp = actualFolder3.buscarFolder(nombreArch);
-                    folderACambiarProp.setPropietario(nuevoProp);
-                    if (system.getLoggedUser() != null) {
-                        system.getLoggedUser().addComando("chown");
-                    }
+                    chown(comando);
                     break;
             }
         }
@@ -218,9 +133,6 @@ public class Main_ {
                 }
             }
         }
-        if (system.getLoggedUser() != null) {
-            system.getLoggedUser().addComando("passwd");
-        }
     }
 
     public static void su(String[] comando) {
@@ -242,9 +154,6 @@ public class Main_ {
                 System.out.println(ANSI_RED + "Ese usuario no existe o su contraseña no fue seteada!\n" + ANSI_RESET);
             }
         }
-        if (system.getLoggedUser() != null) {
-            system.getLoggedUser().addComando("su");
-        }
     }
 
     public static void whoami(String[] comando) {
@@ -254,16 +163,10 @@ public class Main_ {
         } else {
             System.out.println(ANSI_YELLOW + "No hay ningun usuario logueado" + ANSI_RESET);
         }
-        if (system.getLoggedUser() != null) {
-            system.getLoggedUser().addComando("whoami");
-        }
     }
 
     public static void pwd(String[] comando) {
         System.out.println(system.getRute());
-        if (system.getLoggedUser() != null) {
-            system.getLoggedUser().addComando("pwd");
-        }
     }
 
     public static void mkdir(String[] comando) {
@@ -278,9 +181,6 @@ public class Main_ {
             System.out.println(ANSI_GREEN + "Su directorio se creó correctamente!\n" + ANSI_RESET);
         } else {
             System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
-        }
-        if (system.getLoggedUser() != null) {
-            system.getLoggedUser().addComando("mkdir");
         }
     }
 
@@ -297,9 +197,6 @@ public class Main_ {
         } else {
             System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
         }
-        if (system.getLoggedUser() != null) {
-            system.getLoggedUser().addComando("touch");
-        }
     }
 
     public static void echo(String[] comando) {
@@ -314,12 +211,15 @@ public class Main_ {
             String nombreArchivo = comando[largo - 1];
             Folder_ folder = system.ultimoFolder(system.getRute());
             Folder_ file_ = folder.buscarFolder(nombreArchivo);
-            file_.setContenido(textoAIngresar);
+            if (file_ != null){
+               file_.setContenido(textoAIngresar);
+            } else {
+                String[] comandoArtificial = {"touch", nombreArchivo};
+                touch(comandoArtificial); // creamos el archivo porwue no existia
+                echo(comando); // le agregamos la linea al final del contenido
+            }
         } else {
             System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
-        }
-        if (system.getLoggedUser() != null) {
-            system.getLoggedUser().addComando("echo");
         }
     }
 
@@ -337,45 +237,105 @@ public class Main_ {
 
         eliminarDe.quitarArchivo(archivoAgregar);
         moverA.addFolder(archivoAgregar);
-
-        if (system.getLoggedUser() != null) {
-            system.getLoggedUser().addComando("mv");
-        }
     }
 
     public static void cp(String[] comando) {
+        String nombreArchivo2_ = comando[1];
+        String rutaOrigen2 = comando[2];
+        String rutaDestino2 = comando[3];
 
+        Folder_ copiarDe = system.ultimoFolder(rutaOrigen2);
+        Folder_ fileAcopiar = copiarDe.buscarFolder(nombreArchivo2_);
+
+        Folder_ nuevaCopia = new Folder_(fileAcopiar.getNombre(), fileAcopiar.getTipo());
+        nuevaCopia.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
+        nuevaCopia.setPropietario(system.getLoggedUser().getName());
+        nuevaCopia.setContenido(fileAcopiar.getContenido());
+
+        Folder_ moverA2 = system.ultimoFolder(rutaDestino2);
+        moverA2.addFolder(nuevaCopia);
     }
 
     public static void cat(String[] comando) {
-
+        String nombreFolder = comando[1];
+        Folder_ actualFolder = system.ultimoFolder(system.getRute());
+        Folder_ fileAImprimir = actualFolder.buscarFolder(nombreFolder);
+        if (fileAImprimir != null) {
+            System.out.println(fileAImprimir.getContenido());
+        } else {
+            System.out.println(ANSI_RED + "Error: ese archivo no existe" + ANSI_RESET);
+        }
     }
 
     public static void rm(String[] comando) {
-
+        String nombreFolder_ = comando[1];
+        Folder_ actualFolder_ = system.ultimoFolder(system.getRute());
+        Folder_ folderABorrar_ = actualFolder_.buscarFolder(nombreFolder_);
+        actualFolder_.quitarArchivo(folderABorrar_);
+        folderABorrar_ = null;
     }
 
     public static void cd(String[] comando) {
-
+        String ruta = comando[1];
+        String rutaIni = system.getRute();
+        system.setRoute(ruta);
+        if (system.ultimoFolder(system.getRute()) == null) {
+            system.setDirectRoute(rutaIni);
+            System.out.println(ANSI_RED + "Error: esa ruta no existe" + ANSI_RESET);
+        }
     }
 
     public static void ls(String[] comando) {
-
+        if (comando[1].equals("-l")) {
+            Folder_ actualFolder2 = system.ultimoFolder(system.getRute());
+            ArrayList<Folder_> folders = actualFolder2.getFolders();
+            for (Folder_ fol : folders) {
+                System.out.println(fol.toString()); //imprimo la metadata del folder
+            }
+        }
     }
 
     public static void history(String[] comando) {
-
+        User_ user = system.getLoggedUser();
+        if (user != null) {
+            for (String comand : user.getListaComandos()) {
+                System.out.println(comand);
+            }
+        }
     }
 
     public static void pipe(String[] comando) {
-
+        if (comando[1].equals("|") && comando[2].equals("grep")) {
+            User_ user = system.getLoggedUser();
+            for (String comand : user.getListaComandos()) {
+                if (comand.equals(comando[3])) {
+                    System.out.println("Se encontro ese comando.");
+                } else {
+                    System.out.println("No se encontro ese comando.");
+                }
+            }
+        }
     }
 
     public static void chmod(String[] comando) {
-
+        String permisos_ = comando[1];
+        String nombreArch_ = comando[2];
+        Folder_ actualFolder4 = system.ultimoFolder(system.getRute());
+        Folder_ folderACambiarPermisos = actualFolder4.buscarFolder(nombreArch_);
+        folderACambiarPermisos.setPermisos(permisos_);
     }
 
     public static void chown(String[] comando) {
-
+        String nuevoProp = comando[1];
+        String nombreArch = comando[2];
+        Folder_ actualFolder3 = system.ultimoFolder(system.getRute());
+        Folder_ folderACambiarProp = actualFolder3.buscarFolder(nombreArch);
+        folderACambiarProp.setPropietario(nuevoProp);
+    }
+    
+    public static void agregarComando(String textoEscrito){
+        if (system.getLoggedUser() != null) {
+            system.getLoggedUser().addComando(textoEscrito);
+        }
     }
 }
