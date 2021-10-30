@@ -481,7 +481,7 @@ public class Main_ {
                 break;
             case "history":
                 if (comando.length == 1) { // history
-                    res = true;
+                    res = true; //
                 } else if (comando.length == 4) { // history | grep
                     res = (comando[1].equals("|") && comando[2].equals("grep"));
                 }
