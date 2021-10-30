@@ -475,7 +475,9 @@ public class Main_ {
                 res = comando.length == 2;
                 break;
             case "ls":
-                res = comando.length == 2;
+                String menos = ""+comando[1].charAt(0);
+                String l = ""+comando[1].charAt(1);
+                res = (comando.length == 2) && (menos.equals("-")) && (l.equals("l"));  
                 break;
             case "history":
                 if (comando.length == 1) { // history
