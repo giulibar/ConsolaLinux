@@ -3,6 +3,9 @@
 Aplicacion de Consola creada en Java que simula la Shell de Linux con algunos de los comandos mas utilizados.
 El sistema simula los archivos y carpetas como objetos definidos en el lenguaje con sus respectivos atributos.
 
+![image](https://user-images.githubusercontent.com/63260536/139540392-2d1e484f-3686-4457-910b-e0922d175751.png)
+
+
 Comandos:
 - useradd: agrega usuario al sistema
 - passwd: setea/cambia la contraseña del usuario
