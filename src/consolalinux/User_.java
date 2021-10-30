@@ -10,13 +10,13 @@ public class User_ {
     private String name;
     private String password;
     private ArrayList<String> listaComandos;
-    private Boolean isRoot; //
+    private boolean root; //
 
     public User_(String name) {
         this.name = name;
         this.password = null;
         listaComandos = new ArrayList<>();
-        isRoot = false;
+        root = false;
     }
 
     public String getName() {
@@ -43,12 +43,12 @@ public class User_ {
         return listaComandos;
     }
 
-    public Boolean isRoot() {
-        return this.isRoot;
+    public boolean isRoot() {
+        return this.root;
     }
 
-    public void setRoot(Boolean is) {
-        isRoot = is;
+    public void setRoot(boolean is) {
+        root = is;
     }
 
 }
