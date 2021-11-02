@@ -311,7 +311,7 @@ public class Main_ {
                 } else {
                     System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
                 }
-            }else{
+            } else {
                 System.out.println(ANSI_RED + "Error: ese archivo no existe" + ANSI_RESET);
             }
         } else {
@@ -321,14 +321,18 @@ public class Main_ {
 
     public static void rm(String[] comando) {
         if (sintaxisOk(comando)) {
-            if (permisosOk(comando, system.getLoggedUser(), system.ultimoFolder(system.getRute()))) {
-                String nombreFolder_ = comando[1];
-                Folder_ actualFolder_ = system.ultimoFolder(system.getRute());
-                Folder_ folderABorrar_ = actualFolder_.buscarFolder(nombreFolder_);
-                actualFolder_.quitarArchivo(folderABorrar_);
-                folderABorrar_ = null;
+            if (getFolder(comando[1]) != null) {
+                if (permisosOk(comando, system.getLoggedUser(), system.ultimoFolder(system.getRute()))) {
+                    String nombreFolder_ = comando[1];
+                    Folder_ actualFolder_ = system.ultimoFolder(system.getRute());
+                    Folder_ folderABorrar_ = actualFolder_.buscarFolder(nombreFolder_);
+                    actualFolder_.quitarArchivo(folderABorrar_);
+                    folderABorrar_ = null;
+                } else {
+                    System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+                }
             } else {
-                System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+                System.out.println(ANSI_RED + "Error: ese archivo no existe" + ANSI_RESET);
             }
         } else {
             System.out.println(ANSI_RED + "La sentencia es incorrecta. Vuelva a intentarlo.\n" + ANSI_RESET);
@@ -379,11 +383,9 @@ public class Main_ {
     public static void pipe(String[] comando) {
         if (sintaxisOk(comando)) {
             User_ user = system.getLoggedUser();
-            for (String comand : user.getListaComandos()) {
-                if (comand.equals(comando[3])) {
-                    System.out.println("Se encontro ese comando.");
-                } else {
-                    System.out.println("No se encontro ese comando.");
+            for (String sentencia : user.getListaComandos()) {
+                if (sentencia.split(" ")[0].equals(comando[3])) {
+                    System.out.println(sentencia);
                 }
             }
         } else {
@@ -574,6 +576,13 @@ public class Main_ {
                 }
         }
         return res;
+    }
+
+    public static Folder_ getFolder(String comando) {
+        String nombreFolder_ = comando;
+        Folder_ actualFolder_ = system.ultimoFolder(system.getRute());
+        Folder_ folderBuscado = actualFolder_.buscarFolder(nombreFolder_);
+        return folderBuscado;
     }
 
 }
