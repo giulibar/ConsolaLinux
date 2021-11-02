@@ -10,13 +10,20 @@ public class Main_ {
     // inicio el sistema
     public static System_ system = new System_();
     public static Scanner entrada = new Scanner(System.in);
-    public static String ANSI_RED = "\u001B[31m";
-    public static String ANSI_GREEN = "\u001B[32m";
-    public static String ANSI_YELLOW = "\u001B[33m";
-    public static String ANSI_PURPLE = "\u001B[35m";
-    public static String ANSI_CYAN = "\u001B[36m";
-    public static String ANSI_WHITE = "\u001B[37m";
-    public static String ANSI_RESET = "\u001B[0m";
+//    public static String ANSI_RED = "\u001B[31m";
+//    public static String ANSI_GREEN = "\u001B[32m";
+//    public static String ANSI_YELLOW = "\u001B[33m";
+//    public static String ANSI_PURPLE = "\u001B[35m";
+//    public static String ANSI_CYAN = "\u001B[36m";
+//    public static String ANSI_WHITE = "\u001B[37m";
+//    public static String ANSI_RESET = "\u001B[0m";
+    public static String ANSI_RED = "";
+    public static String ANSI_GREEN = "";
+    public static String ANSI_YELLOW = "";
+    public static String ANSI_PURPLE = "";
+    public static String ANSI_CYAN = "";
+    public static String ANSI_WHITE = "";
+    public static String ANSI_RESET = "";
 
     public static void main(String[] args) {
 
@@ -213,25 +220,25 @@ public class Main_ {
 
     public static void echo(String[] comando) {
         if (sintaxisOk(comando)) {
-            if (permisosOk(comando, system.getLoggedUser(), system.ultimoFolder(system.getRute()))) {
-                int largo = comando.length;
-                String nombreArchivo = comando[largo - 1];
-                Folder_ folderActual_3 = system.ultimoFolder(system.getRute());
-                Folder_ file_ = folderActual_3.buscarFolder(nombreArchivo);
-                if (file_ != null) {
+            int largo = comando.length;
+            String nombreArchivo = comando[largo - 1];
+            Folder_ folderActual_3 = system.ultimoFolder(system.getRute());
+            Folder_ file_ = folderActual_3.buscarFolder(nombreArchivo);
 
+            if (file_ != null) {
+                if (permisosOk(comando, system.getLoggedUser(), system.ultimoFolder(system.getRute()))) {
                     String textoAIngresar = comando[1];
                     for (int i = 2; i < largo - 2; i++) {
                         textoAIngresar += " " + comando[i];
                     }
                     file_.setContenido(textoAIngresar);
                 } else {
-                    String[] comandoArtificial = {"touch", nombreArchivo};
-                    touch(comandoArtificial); // creamos el archivo porque no existia
-                    echo(comando); // le agregamos la linea al final del contenido
+                    System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
                 }
             } else {
-                System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+                String[] comandoArtificial = {"touch", nombreArchivo};
+                touch(comandoArtificial); // creamos el archivo porque no existia
+                echo(comando); // le agregamos la linea al final del contenido
             }
         } else {
             System.out.println(ANSI_RED + "La sentencia es incorrecta. Vuelva a intentarlo.\n" + ANSI_RESET);
@@ -291,17 +298,21 @@ public class Main_ {
 
     public static void cat(String[] comando) {
         if (sintaxisOk(comando)) {
-            if (permisosOk(comando, system.getLoggedUser(), system.ultimoFolder(system.getRute()))) {
-                String nombreFolder = comando[1];
-                Folder_ actualFolder = system.ultimoFolder(system.getRute());
-                Folder_ fileAImprimir = actualFolder.buscarFolder(nombreFolder);
-                if (fileAImprimir != null) {
-                    System.out.println(fileAImprimir.getContenido());
+            String nombreFolder = comando[1];
+            Folder_ actualFolder = system.ultimoFolder(system.getRute());
+            Folder_ fileAImprimir = actualFolder.buscarFolder(nombreFolder);
+            if (fileAImprimir != null) {
+                if (permisosOk(comando, system.getLoggedUser(), system.ultimoFolder(system.getRute()))) {
+                    if (fileAImprimir != null) {
+                        System.out.println(fileAImprimir.getContenido());
+                    } else {
+                        System.out.println(ANSI_RED + "Error: ese archivo no existe" + ANSI_RESET);
+                    }
                 } else {
-                    System.out.println(ANSI_RED + "Error: ese archivo no existe" + ANSI_RESET);
+                    System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
                 }
-            } else {
-                System.out.println(ANSI_RED + "Error: no se tiene permisos para realizar la operacion" + ANSI_RESET);
+            }else{
+                System.out.println(ANSI_RED + "Error: ese archivo no existe" + ANSI_RESET);
             }
         } else {
             System.out.println(ANSI_RED + "La sentencia es incorrecta. Vuelva a intentarlo.\n" + ANSI_RESET);
@@ -329,7 +340,7 @@ public class Main_ {
             String ruta = comando[1];
             String rutaIni = system.getRute();
             system.setRoute(ruta);
-            if (system.ultimoFolder(system.getRute()) == null) {
+            if (system.ultimoFolder(system.getRute()) == null || system.ultimoFolder(system.getRute()).getTipo().equals("FILE")) {
                 system.setDirectRoute(rutaIni);
                 System.out.println(ANSI_RED + "Error: esa ruta no existe" + ANSI_RESET);
             }
@@ -475,9 +486,9 @@ public class Main_ {
                 res = comando.length == 2;
                 break;
             case "ls":
-                String menos = ""+comando[1].charAt(0);
-                String l = ""+comando[1].charAt(1);
-                res = (comando.length == 2) && (menos.equals("-")) && (l.equals("l"));  
+                String menos = "" + comando[1].charAt(0);
+                String l = "" + comando[1].charAt(1);
+                res = (comando.length == 2) && (menos.equals("-")) && (l.equals("l"));
                 break;
             case "history":
                 if (comando.length == 1) { // history
