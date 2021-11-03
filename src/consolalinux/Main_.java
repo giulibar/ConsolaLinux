@@ -253,7 +253,10 @@ public class Main_ {
                 String rutaDestino = comando[3];
                 Folder_ eliminarDe = system.ultimoFolder(rutaOrigen);
                 Folder_ moverA = system.ultimoFolder(rutaDestino);
-                Folder_ archivoAgregar = eliminarDe.buscarFolder(nombreArchivo_);
+                Folder_ archivoAgregar = null;
+                if (eliminarDe != null) {
+                    archivoAgregar = eliminarDe.buscarFolder(nombreArchivo_);
+                }
                 if (existenRutasYFolder(eliminarDe, moverA, archivoAgregar)) {
                     archivoAgregar.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
                     archivoAgregar.setPropietario(system.getLoggedUser().getName());
@@ -278,7 +281,10 @@ public class Main_ {
                 String rutaDestino2 = comando[3];
                 Folder_ copiarDe = system.ultimoFolder(rutaOrigen2);
                 Folder_ moverA2 = system.ultimoFolder(rutaDestino2);
-                Folder_ fileAcopiar = copiarDe.buscarFolder(nombreArchivo2_);
+                Folder_ fileAcopiar = null;
+                if (copiarDe != null) {
+                    fileAcopiar = copiarDe.buscarFolder(nombreArchivo2_);
+                }
                 if (existenRutasYFolder(copiarDe, moverA2, fileAcopiar)) {
                     Folder_ nuevaCopia = new Folder_(fileAcopiar.getNombre(), fileAcopiar.getTipo());
                     nuevaCopia.setPermisos("644"); // en la practica, PROP tiene permisos de lectura y escritura, User solo de lectura
