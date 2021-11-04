@@ -136,19 +136,57 @@ public class Folder_ {
             case 0:
                 metadata += "---";
                 break;
+            case 1:
+                metadata += "--x";
+                break;
             case 2:
                 metadata += "-w-";
+                break;
+            case 3:
+                metadata += "-wx";
                 break;
             case 4:
                 metadata += "r--";
                 break;
+            case 5:
+                metadata += "r-x";
+                break;
             case 6:
                 metadata += "rw-";
+                break;
+            case 7:
+                metadata += "rwx";
                 break;
         }
 
         // PERMISOS DE GRUPO
-        metadata += "---";
+        int permGrupo = this.permisoGrupo;
+        switch (permGrupo) {
+            case 0:
+                metadata += "---";
+                break;
+            case 1:
+                metadata += "--x";
+                break;
+            case 2:
+                metadata += "-w-";
+                break;
+            case 3:
+                metadata += "-wx";
+                break;
+            case 4:
+                metadata += "r--";
+                break;
+            case 5:
+                metadata += "r-x";
+                break;
+            case 6:
+                metadata += "rw-";
+                break;
+            case 7:
+                metadata += "rwx";
+                break;
+        }
 
         // PERMISOS DE USUARIO
         int permUsuario = this.permisoUsuario;
@@ -156,14 +194,26 @@ public class Folder_ {
             case 0:
                 metadata += "---";
                 break;
+            case 1:
+                metadata += "--x";
+                break;
             case 2:
                 metadata += "-w-";
+                break;
+            case 3:
+                metadata += "-wx";
                 break;
             case 4:
                 metadata += "r--";
                 break;
+            case 5:
+                metadata += "r-x";
+                break;
             case 6:
                 metadata += "rw-";
+                break;
+            case 7:
+                metadata += "rwx";
                 break;
         }
 
